@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+
+  web:
+    build: .
+    env_file:
+      - .env.prod
+    container_name: holders_back
+    restart: always
+    command: ["/app/docker/app.sh"]
+    ports:
+      - "4000:8000"
+    depends_on:
+      - redis
+
+  bot:
+    build: .
+    env_file:
+      - .env.prod
+    container_name: holders_bot
+    restart: always
+    command: ["python", "bot.py"]
+
+  kick:
+    build: .
+    env_file:
+      - .env.prod
+    container_name: holders_kick
+    restart: always
+    command: ["python", "kick.py"]
+
