@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from src.holder.auth import get_userId
 from src.holder.models import Holder
 from src.holder.utils import check_nft
-from aiogram import Bot
 
 router = APIRouter(
     tags=["holder"]
