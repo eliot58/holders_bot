@@ -16,6 +16,8 @@ DATABASE_URI = f'postgres://{os.environ.get("POSTGRES_USER")}:' \
 
 COLLECTION = os.environ.get("COLLECTION")
 
+SECRET = os.environ.get("SECRET")
+
 APPS_MODELS = [
     "src.holder.models",
     "aerich.models"

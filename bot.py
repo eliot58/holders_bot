@@ -15,7 +15,7 @@ dp = Dispatcher()
 async def command_start_handler(message: types.Message) -> None:
     buttons = [
         [
-            types.InlineKeyboardButton(text="connect", web_app=types.WebAppInfo(url="https://www.google.com"))
+            types.InlineKeyboardButton(text="connect", web_app=types.WebAppInfo(url="https://holder.notwise.co/"))
         ]
     ]
     markup = types.InlineKeyboardMarkup(inline_keyboard=buttons)
