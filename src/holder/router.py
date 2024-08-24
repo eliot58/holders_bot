@@ -1,7 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi_extended import FastAPIExtended
+from fastapi import APIRouter, Depends, HTTPException
 from src.holder.auth import get_userId
-from src.config.settings import CHAT_ID
 from src.holder.models import Holder
 from src.holder.utils import check_nft
 from aiogram import Bot
