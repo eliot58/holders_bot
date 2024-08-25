@@ -6,7 +6,7 @@ import nacl.signing
 from tonsdk.boc import Cell
 import hashlib
 import base64
-from src.config.settings import SECRET
+from nacl.exceptions import BadSignatureError
 
 router = APIRouter(
     tags=["holder"]
@@ -32,13 +32,15 @@ async def check(wallet: dict, userId: int = Depends(get_userId)):
 
     message = (b'ton-proof-item-v2/'
             + 0 .to_bytes(4, 'big') + state_init.bytes_hash()
-            + 28 .to_bytes(4, 'little') + b'ratingers.pythonanywhere.com'
+            + 28 .to_bytes(4, 'little') + b'holder.notwise.com'
             + received_timestamp.to_bytes(8, 'little')
-            + bytes(SECRET))
+            + bytes(userId))
 
     signed = b'\xFF\xFF' + b'ton-connect' + hashlib.sha256(message).digest()
-
-    verify_key.verify(hashlib.sha256(signed).digest(), base64.b64decode(signature))
+    try:
+        verify_key.verify(hashlib.sha256(signed).digest(), base64.b64decode(signature))
+    except BadSignatureError:
+        raise HTTPException(status_code=403, detail="Forbidden")
 
     holder = await Holder.get_or_none(address=address)
     if not holder:
