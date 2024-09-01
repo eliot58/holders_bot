@@ -14,7 +14,8 @@ router = APIRouter(
 )
 
 @router.post("/check")
-async def check(data: WalletSchema, userId: int = Depends(get_userId)):
+async def check(data: WalletSchema):
+    userId = get_userId(data.initData)
 
     address = data.wallet["account"]["address"]
 
