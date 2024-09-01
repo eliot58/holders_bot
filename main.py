@@ -18,7 +18,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Holder",
     docs_url="/",
-    lifespan=lifespan
+    lifespan=lifespan,
+    debug=True
 )
 
 
