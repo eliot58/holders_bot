@@ -14,12 +14,12 @@ async def get_userId(initData: str):
     except ExpiredError:
         raise HTTPException(
             status_code=400,
-            detail="init data expired",
+            detail=f"init data expired {initData}",
         )
     except Exception:
         raise HTTPException(
             status_code=400,
-            detail="Invalid init data",
+            detail=f"Invalid init data {initData}",
         )
     else:
         chat = parse(initData)
