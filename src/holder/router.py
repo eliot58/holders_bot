@@ -7,17 +7,18 @@ from tonsdk.boc import Cell
 import hashlib
 import base64
 from nacl.exceptions import BadSignatureError
+from .schemas import WalletSchema
 
 router = APIRouter(
     tags=["holder"]
 )
 
 @router.post("/check")
-async def check(wallet: dict, userId: int = Depends(get_userId)):
+async def check(data: WalletSchema, userId: int = Depends(get_userId)):
 
-    address = wallet["account"]["address"]
+    address = data.wallet["account"]["address"]
 
-    state_init = Cell.one_from_boc(base64.b64decode(wallet["account"]["walletStateInit"]))
+    state_init = Cell.one_from_boc(base64.b64decode(data.wallet["account"]["walletStateInit"]))
 
     address_hash_part = base64.b16encode(state_init.bytes_hash()).decode('ascii').lower()
     assert address.endswith(address_hash_part)
@@ -26,9 +27,9 @@ async def check(wallet: dict, userId: int = Depends(get_userId)):
 
     verify_key = nacl.signing.VerifyKey(bytes(public_key))
 
-    received_timestamp = wallet["connectItems"]["tonProof"]["proof"]["timestamp"]
+    received_timestamp = data.wallet["connectItems"]["tonProof"]["proof"]["timestamp"]
 
-    signature = wallet["connectItems"]["tonProof"]["proof"]["signature"]
+    signature = data.wallet["connectItems"]["tonProof"]["proof"]["signature"]
 
     message = (b'ton-proof-item-v2/'
             + 0 .to_bytes(4, 'big') + state_init.bytes_hash()
