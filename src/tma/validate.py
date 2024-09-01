@@ -33,5 +33,3 @@ def validate(init_data, token, exp_in):
 
     if sign('\n'.join(pairs), token) != hash_value:
         raise SignInvalidError
-
-    return True
