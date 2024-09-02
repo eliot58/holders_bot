@@ -23,4 +23,4 @@ async def get_userId(initData: str):
         )
     else:
         chat = parse(initData)
-        return chat.user.id
+        return str(chat.user.id)
