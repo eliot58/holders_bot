@@ -13,6 +13,8 @@ router = APIRouter(
 async def check(data: WalletSchema):
     userId = await get_userId(data.initData)
 
+    print(userId)
+    
     address = data.wallet['account']['address']
 
     parsed = convert_ton_proof_message(data.wallet)
