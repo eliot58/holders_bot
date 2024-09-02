@@ -1,3 +1,4 @@
+import json
 from fastapi import APIRouter, Depends, HTTPException
 from src.holder.auth import get_userId
 from src.holder.models import Holder
@@ -17,9 +18,11 @@ router = APIRouter(
 async def check(data: WalletSchema):
     userId = await get_userId(data.initData)
 
-    address = data.wallet["account"]["address"]
+    wallet = json.loads(data.wallet)
 
-    state_init = Cell.one_from_boc(base64.b64decode(data.wallet["account"]["walletStateInit"]))
+    address = wallet["account"]["address"]
+
+    state_init = Cell.one_from_boc(base64.b64decode(wallet["account"]["walletStateInit"]))
 
     address_hash_part = base64.b16encode(state_init.bytes_hash()).decode('ascii').lower()
     assert address.endswith(address_hash_part)
@@ -28,9 +31,9 @@ async def check(data: WalletSchema):
 
     verify_key = nacl.signing.VerifyKey(bytes(public_key))
 
-    received_timestamp = data.wallet["connectItems"]["tonProof"]["proof"]["timestamp"]
+    received_timestamp = wallet["connectItems"]["tonProof"]["proof"]["timestamp"]
 
-    signature = data.wallet["connectItems"]["tonProof"]["proof"]["signature"]
+    signature = wallet["connectItems"]["tonProof"]["proof"]["signature"]
 
     message = (b'ton-proof-item-v2/'
             + 0 .to_bytes(4, 'big') + state_init.bytes_hash()
