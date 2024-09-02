@@ -26,7 +26,7 @@ app = FastAPI(
 app.include_router(holder_router)
 
 
-origins = ['*']
+origins = ["https://holder.notwise.co"]
     
 app.add_middleware(
     CORSMiddleware,
