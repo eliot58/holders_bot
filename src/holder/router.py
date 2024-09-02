@@ -39,7 +39,7 @@ async def check(data: WalletSchema):
             + 0 .to_bytes(4, 'big') + state_init.bytes_hash()
             + 28 .to_bytes(4, 'little') + b'holder.notwise.com'
             + received_timestamp.to_bytes(8, 'little')
-            + bytes(userId))
+            + userId.encode())
 
     signed = b'\xFF\xFF' + b'ton-connect' + hashlib.sha256(message).digest()
     try:
