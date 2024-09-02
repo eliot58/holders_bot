@@ -1,14 +1,9 @@
-import json
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from src.holder.auth import get_userId
 from src.holder.models import Holder
 from src.holder.utils import check_nft
-import nacl.signing
-from tonsdk.boc import Cell
-import hashlib
-import base64
-from nacl.exceptions import BadSignatureError
 from .schemas import WalletSchema
+from .proof import convert_ton_proof_message, check_proof
 
 router = APIRouter(
     tags=["holder"]
@@ -18,33 +13,13 @@ router = APIRouter(
 async def check(data: WalletSchema):
     userId = await get_userId(data.initData)
 
-    wallet = json.loads(data.wallet)
+    address = data.wallet['account']['address']
 
-    address = wallet["account"]["address"]
+    parsed = convert_ton_proof_message(data.wallet)
 
-    state_init = Cell.one_from_boc(base64.b64decode(wallet["account"]["walletStateInit"]))
-
-    address_hash_part = base64.b16encode(state_init.bytes_hash()).decode('ascii').lower()
-    assert address.endswith(address_hash_part)
-
-    public_key = state_init.refs[1].bits.array[8:][:32]
-
-    verify_key = nacl.signing.VerifyKey(bytes(public_key))
-
-    received_timestamp = wallet["connectItems"]["tonProof"]["proof"]["timestamp"]
-
-    signature = wallet["connectItems"]["tonProof"]["proof"]["signature"]
-
-    message = (b'ton-proof-item-v2/'
-            + 0 .to_bytes(4, 'big') + state_init.bytes_hash()
-            + 28 .to_bytes(4, 'little') + b'holder.notwise.com'
-            + received_timestamp.to_bytes(8, 'little')
-            + userId.encode())
-
-    signed = b'\xFF\xFF' + b'ton-connect' + hashlib.sha256(message).digest()
-    try:
-        verify_key.verify(hashlib.sha256(signed).digest(), base64.b64decode(signature))
-    except BadSignatureError:
+    flag = check_proof(address, parsed, userId)
+    
+    if not flag:
         raise HTTPException(status_code=403, detail="Forbidden")
 
     holder = await Holder.get_or_none(address=address)
