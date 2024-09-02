@@ -26,7 +26,7 @@ def validate(init_data, token, exp_in):
         raise SignMissingError
 
     if exp_in > 0 and auth_date:
-        if auth_date + timedelta(seconds=exp_in) < datetime.now(timezone.utc):
+        if auth_date + timedelta(seconds=exp_in) < datetime.now():
             raise ExpiredError
         
     pairs = sorted(pairs)
