@@ -9,7 +9,7 @@ from src.tma.parse import parse
 
 async def get_userId(initData: str):
     try:
-        validate(initData, BOT_TOKEN, timedelta(minutes=5).seconds)
+        validate(initData, BOT_TOKEN, timedelta(minutes=400).seconds)
         
     except ExpiredError:
         raise HTTPException(

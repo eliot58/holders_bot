@@ -12,15 +12,13 @@ router = APIRouter(
 @router.post("/check")
 async def check(data: WalletSchema):
     userId = await get_userId(data.initData)
-
-    print(userId)
     
     address = data.wallet['account']['address']
 
     parsed = convert_ton_proof_message(data.wallet)
 
     flag = check_proof(address, parsed, userId)
-    
+
     if not flag:
         raise HTTPException(status_code=403, detail="Forbidden")
 

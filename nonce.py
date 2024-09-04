@@ -30,8 +30,5 @@ if received_address.endswith(address_hash_part):
 
         signed = b'\xFF\xFF' + b'ton-connect' + hashlib.sha256(message).digest()
 
-        print(hashlib.sha256(signed).digest())
-
-        print(base64.b64decode(signature))
 
         verify_key.verify(hashlib.sha256(signed).digest(), base64.b64decode(signature))
